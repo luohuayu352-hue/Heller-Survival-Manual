@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【機密】海勒製藥企業 - 入職指南</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Zhi+Mang+Xing&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030504;
+            --text-color: #a3c4a8;
+            --alert-color: #ff2a2a;
+            --sys-color: #4af626;
+            --handwriting-color: #4a7ab5;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* CRT Overlay Effect */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+        
+        .crt::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);
+            z-index: 998;
+            pointer-events: none;
+        }
+
+        /* System Boot & Login Screen */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            z-index: 100;
+            transition: opacity 1.5s ease;
+        }
+
+        .terminal-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--sys-color);
+            text-align: left;
+            width: 80%;
+            max-width: 400px;
+            margin-bottom: 30px;
+            min-height: 100px;
+            font-size: 14px;
+            text-shadow: 0 0 5px var(--sys-color);
+        }
+
+        /* Biometric Scanner */
+        .scanner-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border: 2px solid #222;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8) inset;
+        }
+
+        .scanner-container svg {
+            width: 80px;
+            height: 80px;
+            fill: #333;
+            transition: fill 0.3s;
+        }
+
+        .scanner-container.active svg {
+            fill: var(--sys-color);
+            filter: drop-shadow(0 0 8px var(--sys-color));
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background-color: var(--sys-color);
+            box-shadow: 0 0 15px 5px var(--sys-color);
+            display: none;
+            opacity: 0.8;
+        }
+
+        .scanner-container.scanning .scan-line {
+            display: block;
+            animation: scanAnim 1.5s infinite linear;
+        }
+
+        @keyframes scanAnim {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+
+        /* Password Input */
+        #password-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .sys-input {
+            background: transparent;
+            border: 1px solid var(--sys-color);
+            color: var(--sys-color);
+            font-family: 'Share Tech Mono', monospace;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            letter-spacing: 5px;
+            outline: none;
+            font-size: 18px;
+            box-shadow: 0 0 10px rgba(74, 246, 38, 0.2) inset;
+        }
+
+        .sys-btn {
+            background: transparent;
+            border: 1px solid var(--sys-color);
+            color: var(--sys-color);
+            padding: 10px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .sys-btn:hover {
+            background: var(--sys-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--sys-color);
+        }
+
+        /* Main Guide Content */
+        #main-content {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px 80px 20px;
+            position: relative;
+        }
+
+        .header-box {
+            border: 2px solid var(--alert-color);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 40px;
+            background: rgba(255, 0, 0, 0.05);
+            box-shadow: 0 0 10px rgba(255,0,0,0.2) inset;
+        }
+
+        .classified-stamp {
+            position: absolute;
+            top: -20px; left: -10px;
+            color: var(--alert-color);
+            border: 3px solid var(--alert-color);
+            padding: 5px 10px;
+            font-weight: 900;
+            font-size: 24px;
+            transform: rotate(-10deg);
+            background-color: var(--bg-color);
+            letter-spacing: 5px;
+            text-shadow: 0 0 5px var(--alert-color);
+            box-shadow: 0 0 5px var(--alert-color);
+        }
+
+        h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            letter-spacing: 2px;
+        }
+
+        .meta-info {
+            font-family: 'Share Tech Mono', monospace;
+            color: #888;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .warning-text {
+            color: var(--alert-color);
+            font-weight: bold;
+            border-left: 4px solid var(--alert-color);
+            padding-left: 15px;
+            margin: 30px 0;
+            background: rgba(255,42,42,0.1);
+            padding: 15px;
+        }
+
+        h2 {
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            color: #ccc;
+            font-size: 1.5rem;
+            margin-top: 50px;
+        }
+
+        .rule-block {
+            margin-bottom: 25px;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 5px;
+            border-left: 2px solid #333;
+            transition: background 0.3s;
+        }
+        
+        .rule-block:hover {
+            background: rgba(255,255,255,0.05);
+            border-left-color: #666;
+        }
+
+        .rule-number {
+            font-weight: 900;
+            color: #fff;
+            margin-right: 10px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Special Effects */
+        .redact {
+            background-color: #000;
+            color: #000;
+            cursor: pointer;
+            padding: 0 4px;
+            position: relative;
+            transition: all 0.3s;
+            border: 1px solid #111;
+        }
+
+        .redact::after {
+            content: "【資料已塗抹】";
+            position: absolute;
+            left: 5px; top: 0;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .redact.revealed {
+            background-color: transparent;
+            color: var(--alert-color);
+            border: none;
+            font-weight: bold;
+            text-shadow: 0 0 8px var(--alert-color);
+            animation: pulse-red 2s infinite;
+        }
+
+        .redact.revealed::after {
+            display: none;
+        }
+
+        .handwritten {
+            font-family: 'Zhi Mang Xing', cursive;
+            color: var(--handwriting-color);
+            font-size: 1.6rem;
+            line-height: 1.5;
+            padding: 20px;
+            background: rgba(74, 122, 181, 0.05);
+            border: 1px dashed var(--handwriting-color);
+            transform: rotate(-1deg);
+            animation: shake 2.5s infinite;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(-1deg); }
+            2% { transform: translate(1px, -1px) rotate(-1.5deg); }
+            4% { transform: translate(-1px, 1px) rotate(-0.5deg); }
+            6% { transform: translate(0, 0) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(-1deg); }
+        }
+
+        @keyframes pulse-red {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; text-shadow: 0 0 15px var(--alert-color); }
+            100% { opacity: 1; }
+        }
+
+        /* Glitch effect on hover or random */
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text:hover {
+            animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            color: var(--alert-color);
+        }
+
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-10deg); }
+            40% { transform: skew(10deg); }
+            60% { transform: skew(-5deg); }
+            80% { transform: skew(5deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        /* Random flicker for immersion */
+        .flicker {
+            animation: textFlicker 8s infinite;
+        }
+
+        @keyframes textFlicker {
+            0%, 9%, 11%, 19%, 21%, 69%, 71%, 100% { opacity: 1; }
+            10%, 20%, 70% { opacity: 0.4; }
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; }
+            .header-box { padding: 15px; margin-top: 20px;}
+            .classified-stamp { font-size: 18px; top: -15px; left: -5px; }
+            .rule-block { font-size: 0.95rem; padding: 10px; }
+            .handwritten { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body class="crt">
+
+    <!-- Screen 1: Login -->
+    <div id="login-screen">
+        <div class="terminal-text" id="term-text"></div>
+        
+        <div class="scanner-container" id="biometric-btn" style="display:none;" onclick="startScan()">
+            <!-- SVG Fingerprint Icon -->
+            <svg viewBox="0 0 24 24">
+                <path d="M17.5 12.5v1.5a5.5 5.5 0 0 1-11 0v-1.5M12 2v2M7 4.5l1.5 1.5M17 4.5l-1.5 1.5M4 9h2M18 9h2M12 7a5 5 0 0 0-5 5v1.5a5 5 0 0 0 10 0V12a5 5 0 0 0-5-5z"/>
+                <path d="M12 10.5v4M9.5 12.5v1.5M14.5 12.5v1.5"/>
+            </svg>
+            <div class="scan-line"></div>
+        </div>
+        <div style="color: #666; font-size: 12px; margin-bottom: 20px; font-family: monospace;" id="scan-hint" style="display:none;">[ 點擊進行生物辨識 ]</div>
+
+        <div id="password-section">
+            <input type="password" class="sys-input" id="pwd-input" placeholder="ENTER PASSWORD" autocomplete="off" onkeypress="handleEnter(event)">
+            <button class="sys-btn" onclick="verifyPassword()">授權登入</button>
+            <div id="auth-msg" style="margin-top: 15px; font-family: monospace; color: var(--alert-color); font-size: 14px; min-height: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Main Document -->
+    <div id="main-content">
+        <div class="header-box">
+            <div class="classified-stamp">機密 / CONFIDENTIAL</div>
+            <h1 class="glitch-text">海勒製藥企業</h1>
+            <div style="color:#fff; font-weight: 700; font-size: 1.2rem; margin-top: 10px; letter-spacing: 2px;">第四層級基層員工入職與生存指南</div>
+            
+            <div class="meta-info">
+                <span>文檔編號：HPE-4-OM-0092</span>
+                <span>發布部門：海勒商管部 聯合 情報部</span>
+                <span>生效日期：公元曆 ██ 年 ██ 月</span>
+            </div>
+        </div>
+
+        <p class="flicker" style="text-align: justify;">歡迎您加入奧德境內最大的製藥產業——<span class="glitch-text" style="color: #fff; font-weight: bold;">海勒製藥企業</span>。我們致力於為人類的健康與未來提供最卓越的醫療解決方案。為了確保公司內部運作流暢，並保障您的「人身安全」與「使用價值」，請務必將本手冊熟記於心。</p>
+
+        <div class="warning-text">
+            【閱讀前警告】<br><br>
+            <span style="font-weight: normal; color: #ff8888;">本手冊經過多個部門的聯合編修，部分條款可能因跨部門權限重疊而產生邏輯悖論。若您在閱讀過程中發現前後矛盾、字體顏色改變，或感受到強烈的<span class="glitch-text" style="color:#fff;">認知失調</span>，請以您當下殘存的理智為準。</span>
+        </div>
+
+        <h2>▎ 第一章：階級認知</h2>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 1.1</span>
+            本公司採行嚴格的四層級管理制度。身為第四層級的基層人員，您的職責涵蓋清掃、安保、雜務，以及在必要時配合研發部門擔任<span class="redact" onclick="revealText(this)">　消耗性材料　</span>。請對自己的定位保持絕對的自覺。
+            <div style="font-size: 12px; color: #555; margin-top: 5px;">（註：點擊上方黑色塗抹區域以解除視覺遮蔽協議）</div>
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 1.2</span>
+            第二層級與第三層級（參謀、法律顧問、藥師）的命令等同於絕對。如果藥師要求您服用任何<span style="color:#ff00ff; text-shadow: 0 0 5px #ff00ff;">不明顏色的液體</span>，請<span class="glitch-text" style="color:var(--alert-color); font-weight:bold;">立刻飲用</span>；如果法律顧問同時遞給您一份「自願捐贈切結書」，請在飲用前簽名。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 1.3</span>
+            第一層級為海勒首領（Boss），擁有最高領導權。首領的形象永遠是斯文、大方、充滿知識分子菁英氣息的。他在政商名流圈中備受尊崇。
+        </div>
+
+        <div class="rule-block handwritten">
+            <span style="font-family: 'Share Tech Mono', monospace; font-size: 14px; color: #666; display: block; margin-bottom: 10px; text-shadow: none;">（本條目為不規則的藍色手寫字體，似乎是用極度顫抖的手寫下的）</span>
+            如果你在午夜的走廊上，看見一個身高約180公分、體型偏瘦的男人。他沒有展現出任何優雅大方，反而神經緊繃、瘋狂咬著指甲、眼神多疑且暴躁易怒，並對你罵出尖酸刻薄的髒話——<strong style="color: #000; background: rgba(255,0,0,0.5);">請立刻低頭，不要直視他，不要試圖安撫他。</strong><br><br>
+            記住，那「不是」老闆。老闆不會有這種自暴自棄的享樂行為。如果你看穿了他的恐懼與不安全感，游擊部明天就會來清理你的宿舍。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 1.5</span>
+            絕對禁止在任何場合提及「小護士」等稱呼。若您聽到有自稱 Ares 的人士使用上述詞彙稱呼首領，請<span style="text-decoration: underline; color: #fff;">立刻捂住雙耳</span>，並前往情報部申請記憶覆蓋。
+        </div>
+
+        <h2>▎ 第二章：五大部門</h2>
+        <p style="color: #bbb; line-height: 1.6; margin-bottom: 25px; padding-left: 5px;">海勒的五大部門（拷問部、游擊部、商管部、人力部、情報部）負責維繫企業與「地下組織」的雙重運作。</p>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 2.1</span>
+            若人力部發送人事變動通知，請於十分鐘內報到。他們負責妥善「<span style="color:#fff; font-weight:bold;">運用</span>」基層士兵。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 2.2</span>
+            若拷問部向您發送職務調動通知，<span class="glitch-text" style="color:var(--alert-color); font-weight:bold; text-decoration: underline;">請拒絕</span>。拷問部只負責逼取口供，不負責人事調動。如果您已經在前往拷問部的路上，請盡量放鬆肌肉，這有助於維持器官的完整性與後續商管部的資源分配。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 2.3</span>
+            商管部負責記錄內部所有資源。如果您在搬運標註為「廢棄物」的黑色塑膠袋時，發現袋子正在蠕動或發出求救聲，請將其視為「<span class="glitch-text" style="color:#fff; font-weight:bold;">未加工的製藥原料</span>」。不要試圖打開，不要報警。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 2.4</span>
+            承上，奧德的政府、司法界與警方皆為本公司的長期合作夥伴。如果在公司大樓內遇到穿著警服、試圖「查緝非法活動」或「解救人質」的人員，請直接通知游擊部進行抹除。<strong style="color:#fff;">真正的警察不會和我們發生衝突。</strong>
+        </div>
+
+        <div class="rule-block flicker" style="border-left-color: var(--alert-color); background: rgba(255,0,0,0.05);">
+            <span class="rule-number" style="color: var(--alert-color);">守則 2.5</span>
+            <span style="text-decoration: line-through; opacity: 0.5;">請忽略守則 2.2。</span>拷問部擁有最高調度權。如果他們呼喚你，你<span class="glitch-text" style="color: var(--alert-color); font-weight: 900; font-size: 1.2rem;">必須去</span>。人力部和拷問部的界線在某些實驗週期內並不存在。
+        </div>
+
+        <h2>▎ 第三章：核心產品「阿科瓦（Arcova）」</h2>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 3.1</span>
+            阿科瓦是本公司最偉大的研發成果。它能促進 DNA 修復、提高組織修復速度，讓人體機能達到巔峰，並大幅降低痛覺和疲勞感。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 3.2</span>
+            <span style="color:#a3c4a8;">【員工福利】</span> 員工餐廳的飲用水中已添加微量阿科瓦，以確保各位在講求強盛與高效的時代下，能應付高強度的雜務。
+        </div>
+
+        <div class="rule-block" style="border: 1px solid var(--alert-color); box-shadow: 0 0 10px rgba(255,0,0,0.2) inset;">
+            <span class="rule-number" style="color: var(--alert-color);">守則 3.3 【嚴重警告】</span>
+            如果您發現自己連續工作 96 小時卻毫無睡意，且在操作重型機械不慎切斷手指時感覺不到任何疼痛，甚至傷口在幾分鐘內開始<span class="glitch-text" style="color:#fff;">異常增生肉芽</span>——<strong style="color:var(--alert-color); background: #000; padding: 0 5px;">請不要去醫務室</strong>。請直接前往地下三層的「實驗體回收槽」待命。
+        </div>
+
+        <div class="rule-block handwritten" style="color: #ff2a2a; border-color: #ff2a2a; background: rgba(255,0,0,0.08); font-weight: bold; transform: rotate(1.5deg);">
+            <span style="font-family: 'Share Tech Mono', monospace; font-size: 14px; color: #ff8888; display: block; margin-bottom: 10px; text-shadow: none; transform: none;">（此段落被紅色墨水大面積狂亂地塗抹覆蓋）</span>
+            阿科瓦會讓人產生不可逆的依賴性。它不是在修復你，它是在取代你的細胞。我們都會變成那些沒有痛覺的怪物。老闆根本不在乎道德，他只在乎——
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 3.5</span>
+            關於守則 3.4 的惡意塗鴉，該名編寫者已被情報部逮捕。請相信公司，<span style="color: var(--sys-color); font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 8px var(--sys-color);">阿科瓦是絕對安全的。</span>
+        </div>
+
+        <h2>▎ 第四章：高層辦公區</h2>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 4.1</span>
+            卡西安秘書（懷瑟·卡西安）是首領的直屬秘書。她氣質知性、疏離感明顯。在任何辦公場合，請對她保持<span style="color:#fff; font-weight:bold; letter-spacing: 2px;">最高級別的禮貌</span>。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 4.2</span>
+            若您在非工作時間（例如凌晨的地下檔案室），看見首領與卡西安秘書在沒有任何肢體接觸的情況下激烈且深入地探討「思想」、「未來」或哲學問題，請<span style="opacity: 0.6; font-style: italic; letter-spacing: 1px;">安靜地退下</span>。
+        </div>
+
+        <div class="rule-block flicker" style="border-left: 4px solid var(--alert-color); background: rgba(255,0,0,0.06);">
+            <span class="rule-number" style="color: var(--alert-color);">守則 4.3</span>
+            承守則 4.2。如果您在任何場合看見首領與卡西安秘書展現出情侶般的「親暱、撒嬌或熱烈擁吻」，<strong style="color:var(--alert-color); font-size: 1.1rem; text-decoration: underline; background: #000; padding: 2px 5px;">請立刻閉上眼睛並注射隨身攜帶的鎮靜劑。</strong><br><br>
+            <span class="glitch-text" style="color: #fff; font-weight: 900; font-size: 1.2rem;">那不是他們。</span> <br>
+            那是阿科瓦副作用引起的重度精神幻覺，或是偽裝成他們外貌的實驗室逃脫物。<br>
+            <span style="color: var(--sys-color); text-shadow: 0 0 5px var(--sys-color); display: block; margin-top: 15px; font-family: 'Share Tech Mono', monospace; font-size: 0.95rem;">> 真正的他們永遠保持著理性的距離。</span>
+        </div>
+
+        <h2>▎ 第五章：深海賭場（Abysmal Sea Casino）</h2>
+        <p style="color: #bbb; line-height: 1.6; margin-bottom: 25px; padding-left: 5px;">海勒於迪蘭契歐的利格區經營著一間名為深海賭場的私人會所。內部常客皆為政商名流與貴族。</p>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 5.1</span>
+            無通行證者不得進入賭場。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 5.2</span>
+            如果您沒有獲得通行證，卻被游擊部安排上了前往利格區的黑色運輸車，請仔細檢查您今晚的制服。<br><br>
+            如果制服標籤上寫著的不是「Staff（員工）」，而是「<span style="color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.8); font-weight: 900; border: 1px dashed #ffd700; padding: 2px 6px; letter-spacing: 1px;">Chip（籌碼）</span>」或「<span style="color: var(--alert-color); text-shadow: 0 0 10px var(--alert-color); font-weight: 900; border: 1px solid var(--alert-color); padding: 2px 6px; letter-spacing: 1px;">Prize（獎品）</span>」，請不要驚慌。這表示您已從第四層級員工，<span class="glitch-text" style="color: var(--sys-color); font-weight: bold; background: rgba(74, 246, 38, 0.1); padding: 0 5px;">晉升為公司的高價值交易資產</span>。
+        </div>
+
+        <div class="rule-block">
+            <span class="rule-number">守則 5.3</span>
+            在賭場內部，無論名流們在包廂內對您進行何種要求，即使涉及<span style="opacity: 0.5; text-decoration: line-through;">肢體殘缺</span>，都請記住<span class="flicker" style="color: var(--sys-color); font-weight: bold;">阿科瓦會修復您</span>（參考守則 3.1）。您是海勒最驕傲的<strong style="font-size: 1.1rem; color: #fff; background: rgba(255,255,255,0.15); padding: 2px 8px; box-shadow: 0 0 5px rgba(255,255,255,0.5) inset;">產品展示台</strong>。
+        </div>
+
+        <!-- 最終反轉區塊 -->
+        <div style="margin-top: 80px; padding: 40px 20px; border: 2px solid #222; background: repeating-linear-gradient(45deg, #0a0a0a, #0a0a0a 10px, #000 10px, #000 20px); text-align: center; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.9) inset;">
+            <div class="glitch-text" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: var(--bg-color); padding: 0 20px; color: var(--alert-color); font-weight: 900; font-size: 1.8rem; letter-spacing: 8px; text-shadow: 0 0 15px var(--alert-color);">▎最終聲明</div>
+            
+            <div class="rule-block" style="border: none; background: transparent; text-align: center; margin-top: 10px;">
+                <div class="glitch-text" style="font-size: 2.5rem; color: var(--alert-color); font-family: 'Share Tech Mono', monospace; font-weight: 900; margin-bottom: 30px; animation-duration: 0.1s;">守則 0.0</div>
+                
+                <p style="font-size: 1.2rem; color: #ccc; line-height: 2.2;">
+                    請重新閱讀<a href="#" onclick="alert('SYSTEM ERROR: 權限不足 / 認知損毀'); return false;" style="color: var(--sys-color); text-decoration: underline; font-family: monospace; font-weight: bold; cursor: help;">守則 1.1</a>。<br>
+                    這間公司從來沒有設立過「第四層級」的員工編制。<br>
+                    從您簽下入職合約，並喝下第一杯員工餐廳的飲用水開始，<br>
+                    <span style="display: block; margin: 30px auto; padding: 15px; background: var(--alert-color); color: #000; font-weight: 900; font-size: 1.6rem; letter-spacing: 2px; box-shadow: 0 0 30px var(--alert-color); max-width: 400px; transform: scale(1.05);">您就不再被定義為「人」了。</span>
+                </p>
+            </div>
+            
+            <div class="flicker" style="margin-top: 50px; color: var(--sys-color); font-family: 'Noto Sans TC', sans-serif; font-size: 1.1rem; letter-spacing: 4px; text-shadow: 0 0 10px var(--sys-color); font-weight: bold;">
+                歡迎來到海勒製藥企業。<br>
+                <span style="font-size: 0.9rem; font-weight: normal; margin-top: 10px; display: block;">願您在奧德的每一天，都充滿著強盛、高效與年輕。</span>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; color: #444; font-family: monospace; font-size: 12px;">
+            -- END OF FILE // MAY GOD HAVE MERCY ON YOUR SOUL --
+        </div>
+    </div>
+
+    <script>
+        // --- Boot Sequence Simulation ---
+        const bootMessages = [
+            "Heller OS v4.0.2 initializing...",
+            "Loading security modules... OK",
+            "Establishing connection to Mainframe... OK",
+            "Verifying personnel clearance level...",
+            "WARNING: Restricted Area.",
+            "Awaiting Biometric Authentication..."
+        ];
+
+        let msgIndex = 0;
+        const termElement = document.getElementById("term-text");
+        const scannerBtn = document.getElementById("biometric-btn");
+        const scanHint = document.getElementById("scan-hint");
+
+        function typeLine() {
+            if (msgIndex < bootMessages.length) {
+                termElement.innerHTML += bootMessages[msgIndex] + "<br>";
+                msgIndex++;
+                setTimeout(typeLine, Math.random() * 300 + 200);
+            } else {
+                setTimeout(() => {
+                    scannerBtn.style.display = "flex";
+                    scanHint.style.display = "block";
+                }, 500);
+            }
+        }
+
+        window.onload = () => {
+            setTimeout(typeLine, 1000);
+        };
+
+        // --- Interaction Logic ---
+        let isScanned = false;
+
+        function startScan() {
+            if(isScanned) return;
+            scannerBtn.classList.add("active");
+            scannerBtn.classList.add("scanning");
+            scanHint.innerText = "[ 掃描中... 請保持靜止 ]";
+            scanHint.style.color = "var(--sys-color)";
+            
+            setTimeout(() => {
+                scannerBtn.classList.remove("scanning");
+                isScanned = true;
+                termElement.innerHTML += "<br>> Biometric matched: Clearance Level 4 (Disposable).<br>> Please enter passphrase to proceed.<br>";
+                scanHint.style.display = "none";
+                document.getElementById("password-section").style.display = "flex";
+                document.getElementById("pwd-input").focus();
+            }, 2500);
+        }
+
+        function handleEnter(e) {
+            if(e.key === 'Enter') verifyPassword();
+        }
+
+        function verifyPassword() {
+            const pwd = document.getElementById("pwd-input").value;
+            const msgBox = document.getElementById("auth-msg");
+            
+            if(pwd.length < 3) {
+                msgBox.innerText = "ACCESS DENIED: Password too short.";
+                return;
+            }
+            
+            msgBox.style.color = "var(--sys-color)";
+            msgBox.innerText = "VERIFYING...";
+            
+            setTimeout(() => {
+                msgBox.innerText = "ACCESS GRANTED. OVERRIDING PROTOCOLS...";
+                
+                // Screen transition effect
+                setTimeout(() => {
+                    const loginScreen = document.getElementById("login-screen");
+                    loginScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loginScreen.style.display = 'none';
+                        document.getElementById("main-content").style.display = 'block';
+                    }, 1500);
+                }, 1000);
+
+            }, 1500);
+        }
+
+        function revealText(element) {
+            if (!element.classList.contains('revealed')) {
+                element.classList.add('revealed');
+                element.innerHTML = "消耗性材料";
+            }
+        }
+    </script>
+</body>
+</html>
